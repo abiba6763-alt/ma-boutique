@@ -21,6 +21,7 @@ let CFG = {
   omMerchant:    '74059599',
 };
 
+const URL_API = "https://script.google.com/macros/s/AKfycbzocpRAaL58zWTRl-k_tNXdpI4vSzGCEWnip3LeEDTtxHNJ35-m-grPqMvzp1ElQFd9OQ/exec?spreadsheetId=16jxzNRw4gv7NOJiVpxW1fIAeA_uEn6DpilngMttuuVY&sheetName=Feuille 1";
 const GITHUB_FILE = 'produits.json'; // chemin dans le dépôt
 
 // ──────────────────────────────────────────
@@ -126,73 +127,17 @@ function switchTab(tabId, btn) {
 // ──────────────────────────────────────────
 // GITHUB API — lecture de produits.json
 // ──────────────────────────────────────────
-async function getGitHubFile() {
-  // Retourne { content, sha } ou null
-  if (!CFG.ghToken || !CFG.ghOwner || !CFG.ghRepo) return null;
-  const url = `https://api.github.com/repos/${CFG.ghOwner}/${CFG.ghRepo}/contents/${GITHUB_FILE}?ref=${CFG.ghBranch}`;
-  const resp = await fetch(url, {
-    headers: {
-      'Authorization': `Bearer ${CFG.ghToken}`,
-      'Accept': 'application/vnd.github+json',
-    }
-  });
-  if (!resp.ok) throw new Error(`GitHub GET ${resp.status}: ${resp.statusText}`);
-  const data = await resp.json();
-  const decoded = atob(data.content.replace(/\n/g, ''));
-  return { content: JSON.parse(decoded), sha: data.sha };
-}
-
-async function putGitHubFile(jsonArray, sha) {
-  // Envoie le fichier JSON mis à jour sur GitHub
-  if (!CFG.ghToken || !CFG.ghOwner || !CFG.ghRepo) {
-    throw new Error('Configuration GitHub incomplète. Allez dans l\'onglet Config.');
-  }
-  const url = `https://api.github.com/repos/${CFG.ghOwner}/${CFG.ghRepo}/contents/${GITHUB_FILE}`;
-  const body = JSON.stringify({
-    message: `[FasoMarket] Mise à jour catalogue — ${new Date().toLocaleString('fr-FR')}`,
-    content: btoa(unescape(encodeURIComponent(JSON.stringify(jsonArray, null, 2)))),
-    sha,
-    branch: CFG.ghBranch,
-  });
-  const resp = await fetch(url, {
-    method: 'PUT',
-    headers: {
-      'Authorization': `Bearer ${CFG.ghToken}`,
-      'Accept': 'application/vnd.github+json',
-      'Content-Type': 'application/json',
-    },
-    body,
-  });
-  if (!resp.ok) {
-    const err = await resp.json().catch(() => ({}));
-    throw new Error(`GitHub PUT ${resp.status}: ${err.message || resp.statusText}`);
-  }
-  return await resp.json();
-}
-
-// ──────────────────────────────────────────
-// CHARGEMENT DES PRODUITS
-// ──────────────────────────────────────────
 async function loadProductsFromGitHub() {
   try {
-    const result = await getGitHubFile();
-    if (result) {
-      products = result.content;
-    } else {
-      // Pas de config GitHub : charger depuis le fichier local
-      const resp = await fetch('./produits.json?t=' + Date.now(), { cache: 'no-store' });
-      products = await resp.json();
-    }
-  } catch(e) {
-    console.warn('Impossible de charger depuis GitHub, fallback local:', e);
-    try {
-      const resp = await fetch('./produits.json?t=' + Date.now(), { cache: 'no-store' });
-      products = await resp.json();
-    } catch(e2) {
-      products = [];
-    }
+    const response = await fetch(URL_API);
+    products = await response.json();
+    renderAdminList(); 
+  } catch (error) {
+    console.error("Erreur Google Sheets :", error);
+    showToast("⚠️ Impossible de charger les produits.");
   }
 }
+
 
 // ──────────────────────────────────────────
 // CLOUDINARY UPLOAD
@@ -293,43 +238,30 @@ async function sauvegarderProduit() {
     imageUrl,
     statut,
   };
-
-  showPushStatus('loading', '⏳ Mise à jour sur GitHub…');
+  showToast("⏳ Envoi vers Google Sheets...");
+  
   try {
-    // 1. Récupérer le fichier + son SHA depuis GitHub
-    let sha;
-    let remoteProducts;
-    try {
-      const result = await getGitHubFile();
-      sha             = result.sha;
-      remoteProducts  = result.content;
-    } catch(e) {
-      throw new Error('Impossible de lire produits.json depuis GitHub : ' + e.message);
-    }
-
-    // 2. Mettre à jour le tableau
-    if (editId) {
-      const idx = remoteProducts.findIndex(p => p.id === parseInt(editId));
-      if (idx !== -1) remoteProducts[idx] = product;
-      else remoteProducts.push(product);
+    const response = await fetch(URL_API, {
+      method: "POST",
+      body: JSON.stringify(product)
+    });
+    
+    const resultat = await response.json();
+    
+    if (resultat.status === "success") {
+      showToast("✅ Enregistré dans Google Sheets !");
+      resetForm(); // Vide le formulaire
+      loadProductsFromGitHub();
+       ; // Recharge le tableau admin
     } else {
-      remoteProducts.push(product);
+      showToast("⚠️ Erreur : " + resultat.message);
     }
-
-    // 3. Pousser le fichier mis à jour
-    await putGitHubFile(remoteProducts, sha);
-
-    products = remoteProducts;
-    loadAdminList();
-    resetForm();
-    showPushStatus('success', '✅ Produit publié ! Netlify redéploie en cours…');
-    showToast(editId ? '✅ Produit modifié' : '✅ Produit ajouté');
-
-  } catch(e) {
-    showPushStatus('error', '❌ Erreur : ' + e.message);
-    showToast('❌ ' + e.message);
+  } catch (error) {
+    console.error("Erreur d'envoi :", error);
+    showToast("❌ Échec de la connexion.");
   }
 }
+
 
 function showPushStatus(type, text) {
   const el   = document.getElementById('pushStatus');
