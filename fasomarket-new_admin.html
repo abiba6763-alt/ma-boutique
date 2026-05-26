@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f2d6e">
+  <title>FasoMarket — Administration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Styles spécifiques à l'admin ── */
+    body { padding-bottom: 40px; }
+
+    /* ── EN-TÊTE ADMIN ── */
+    .admin-header {
+      background: var(--navy);
+      padding: 16px 20px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(9,30,74,0.4);
+    }
+    .admin-header a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .admin-header-title {
+      font-family: var(--font);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--white);
+      flex: 1;
+    }
+    .admin-header-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      font-family: var(--font-body);
+    }
+
+    /* ── PIN SCREEN ── */
+    .pin-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      background: var(--navy-xlight);
+    }
+    .pin-logo {
+      font-family: var(--font);
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .pin-logo span { color: var(--gold); }
+    .pin-lock { font-size: 48px; margin-bottom: 16px; }
+    .pin-title {
+      font-family: var(--font);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .pin-sub { font-size: 13px; color: var(--gray); margin-bottom: 28px; }
+
+    .pin-dots { display: flex; gap: 14px; margin-bottom: 8px; }
+    .pin-dot {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--gray-light);
+      background: transparent;
+      transition: all 0.18s;
+    }
+    .pin-dot.filled {
+      background: var(--navy);
+      border-color: var(--navy);
+    }
+    .pin-error {
+      color: var(--red);
+      font-size: 13px;
+      font-family: var(--font);
+      min-height: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .pin-keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      width: 100%;
+      max-width: 280px;
+    }
+    .pin-key {
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: none;
+      background: var(--white);
+      font-family: var(--font);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--navy);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
+      transition: background 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pin-key:active { background: var(--navy-light); transform: scale(0.93); }
+    .pin-key.special { font-size: 16px; color: var(--gray); background: transparent; box-shadow: none; }
+
+    /* ── PANNEAU ADMIN ── */
+    .admin-panel { display: none; }
+    .admin-panel.visible { display: block; }
+
+    .admin-tabs {
+      display: flex;
+      gap: 0;
+      background: var(--white);
+      border-bottom: 2px solid var(--gray-light);
+      position: sticky;
+      top: 56px;
+      z-index: 90;
+    }
+    .admin-tab {
+      flex: 1;
+      padding: 12px 6px;
+      border: none;
+      border-bottom: 3px solid transparent;
+      background: transparent;
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gray);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      margin-bottom: -2px;
+    }
+    .admin-tab.active {
+      color: var(--navy);
+      border-bottom-color: var(--navy);
+    }
+
+    .tab-content { padding: 20px; display: none; }
+    .tab-content.active { display: block; }
+
+    /* ── FORMULAIRE ── */
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--navy);
+      display: block;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--gray-light);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-family: var(--font-body);
+      color: var(--dark);
+      outline: none;
+      transition: border-color 0.2s;
+      background: var(--white);
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--navy); }
+    .form-textarea { resize: vertical; min-height: 70px; }
+    .form-note { font-size: 11px; color: var(--gray); margin-top: 5px; }
+
+    /* ── UPLOAD IMAGE CLOUDINARY ── */
+    .img-upload-area {
+      border: 2px dashed var(--navy-light);
+      border-radius: var(--radius-sm);
+      padding: 22px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--navy-xlight);
+      position: relative;
+    }
+    .img-upload-area:hover { border-color: var(--navy); background: var(--navy-light); }
+    .img-upload-area input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%; height: 100%;
+    }
+    .img-upload-icon { font-size: 30px; margin-bottom: 8px; }
+    .img-upload-title { font-family: var(--font); font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    .img-upload-sub   { font-size: 12px; color: var(--gray); }
+
+    .img-upload-progress {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 14px;
+      background: var(--navy-light);
+      border-radius: var(--radius-sm);
+      margin-top: 8px;
+    }
+    .img-upload-progress.show { display: flex; }
+    .upload-spinner {
+      width: 20px; height: 20px;
+      border: 3px solid var(--navy-light);
+      border-top-color: var(--navy);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .upload-progress-text { font-size: 13px; color: var(--navy); font-family: var(--font); font-weight: 600; }
+
+    .img-preview-wrap {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: linear-gradient(135deg, var(--navy-xlight), var(--accent-light));
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--navy-light);
+      margin-top: 8px;
+    }
+    .img-preview-wrap.show { display: flex; }
+    .img-preview-thumb { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 2px solid var(--navy-light); }
+    .img-preview-info  { flex: 1; }
+    .img-preview-name  { font-size: 12px; font-weight: 700; color: var(--navy); font-family: var(--font); }
+    .img-preview-url   { font-size: 10px; color: var(--gray); word-break: break-all; margin-top: 2px; }
+    .btn-remove-img {
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 28px; height: 28px;
+      font-size: 14px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .img-url-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 10px 0;
+      color: var(--gray);
+      font-size: 12px;
+    }
+    .img-url-divider::before, .img-url-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--gray-light);
+    }
+
+    /* ── LISTE PRODUITS ── */
+    .admin-list { display: flex; flex-direction: column; gap: 10px; }
+    .admin-item {
+      background: var(--navy-xlight);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid rgba(15,45,110,0.06);
+    }
+    .admin-thumb {
+      width: 50px; height: 50px;
+      border-radius: 10px;
+      background: var(--navy-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .admin-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .admin-item-info  { flex: 1; min-width: 0; }
+    .admin-item-name  { font-family: var(--font); font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--navy); }
+    .admin-item-price { font-size: 12px; color: var(--accent); font-weight: 600; }
+    .admin-item-cat   { font-size: 11px; color: var(--gray); }
+    .admin-item-actions { display: flex; gap: 6px; }
+    .btn-edit { background: var(--accent-light); color: var(--accent-dark); border: none; border-radius: 8px; padding: 6px 10px; font-size: 14px; cursor: pointer; }
+    .btn-del  { background: #fee2e2; color: var(--red); border: none; border-radius: 8px; padding: 6px 10px; font-size: 14px; cursor: pointer; }
+
+    .empty-state { text-align: center; padding: 40px 0; color: var(--gray); }
+    .empty-state .ico { font-size: 40px; margin-bottom: 10px; }
+    .empty-state p { font-size: 13px; }
+
+    /* ── CONFIG SECTION ── */
+    .settings-section { margin-bottom: 24px; }
+    .settings-title { font-family: var(--font); font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--navy); }
+    .settings-row { display: flex; gap: 8px; }
+    .settings-row .form-input { flex: 1; }
+    .btn-save-settings {
+      padding: 10px 16px;
+      background: var(--navy);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* ── STATUS PUSH GITHUB ── */
+    .push-status {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      margin-top: 12px;
+      font-size: 13px;
+      font-family: var(--font);
+      font-weight: 600;
+    }
+    .push-status.show { display: flex; }
+    .push-status.loading { background: var(--navy-light); color: var(--navy); }
+    .push-status.success { background: #d1fae5; color: var(--green-dark); }
+    .push-status.error   { background: #fee2e2; color: var(--red); }
+    .push-spinner {
+      width: 18px; height: 18px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+
+    /* ── BOUTONS ── */
+    .btn-primary {
+      width: 100%;
+      padding: 15px;
+      background: var(--navy);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.2s;
+      margin-bottom: 8px;
+    }
+    .btn-primary:active { background: var(--navy-dark); }
+    .btn-secondary {
+      width: 100%;
+      padding: 13px;
+      background: var(--gray-light);
+      color: var(--dark);
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+    .btn-danger {
+      background: var(--red);
+      color: white;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── EN-TÊTE ── -->
+<div class="admin-header">
+  <a href="index.html" aria-label="Retour à la boutique">←</a>
+  <div>
+    <div class="admin-header-title">Administration</div>
+    <div class="admin-header-sub">FasoMarket</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ÉCRAN PIN
+══════════════════════════════════════ -->
+<div class="pin-screen" id="pinScreen">
+  <div class="pin-lock">🔐</div>
+  <div class="pin-title">Accès sécurisé</div>
+  <div class="pin-sub">Entrez votre code PIN à 4 chiffres</div>
+  <div class="pin-dots" id="pinDots">
+    <div class="pin-dot"></div>
+    <div class="pin-dot"></div>
+    <div class="pin-dot"></div>
+    <div class="pin-dot"></div>
+  </div>
+  <div class="pin-error" id="pinError"></div>
+  <div class="pin-keypad">
+    <button class="pin-key" onclick="pinKey('1')">1</button>
+    <button class="pin-key" onclick="pinKey('2')">2</button>
+    <button class="pin-key" onclick="pinKey('3')">3</button>
+    <button class="pin-key" onclick="pinKey('4')">4</button>
+    <button class="pin-key" onclick="pinKey('5')">5</button>
+    <button class="pin-key" onclick="pinKey('6')">6</button>
+    <button class="pin-key" onclick="pinKey('7')">7</button>
+    <button class="pin-key" onclick="pinKey('8')">8</button>
+    <button class="pin-key" onclick="pinKey('9')">9</button>
+    <button class="pin-key special" onclick="pinKey('clear')">⌫</button>
+    <button class="pin-key" onclick="pinKey('0')">0</button>
+    <button class="pin-key special" style="font-size:11px;color:var(--navy)" onclick="window.location.href='index.html'">↩</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PANNEAU ADMIN
+══════════════════════════════════════ -->
+<div class="admin-panel" id="adminPanel">
+
+  <!-- ONGLETS -->
+  <div class="admin-tabs">
+    <button class="admin-tab active" onclick="switchTab('ajouter', this)">➕ Ajouter</button>
+    <button class="admin-tab" onclick="switchTab('liste', this)">📋 Produits</button>
+    <button class="admin-tab" onclick="switchTab('config', this)">🔧 Config</button>
+  </div>
+
+  <!-- ── ONGLET : AJOUTER / ÉDITER ── -->
+  <div class="tab-content active" id="tabAjouter">
+    <div class="form-group">
+      <label class="form-label">Nom du produit *</label>
+      <input class="form-input" type="text" id="fNom" placeholder="Ex: Stéthoscope cardiologique">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Prix (F CFA) *</label>
+      <input class="form-input" type="number" id="fPrix" placeholder="Ex: 15000">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Catégorie *</label>
+      <select class="form-select" id="fCategorie">
+        <option value="Matériel médical">🩺 Matériel médical</option>
+        <option value="Tenues scolaires">🥼 Tenues scolaires</option>
+        <option value="Diagnostic">🔬 Diagnostic</option>
+        <option value="Consommables">🧤 Consommables</option>
+        <option value="Équipements">⚕️ Équipements</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" id="fDesc" placeholder="Caractéristiques, utilisation, taille…"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Emoji (si pas d'image)</label>
+      <input class="form-input" type="text" id="fEmoji" placeholder="🩺" maxlength="4">
+    </div>
+
+    <!-- ── UPLOAD CLOUDINARY ── -->
+    <div class="form-group">
+      <label class="form-label">📸 Image du produit</label>
+
+      <div class="img-upload-area" id="imgUploadArea">
+        <input type="file" id="imgFileInput" accept="image/*" onchange="handleImageUpload(this)">
+        <div class="img-upload-icon">☁️</div>
+        <div class="img-upload-title">Uploader une image</div>
+        <div class="img-upload-sub">Cliquez ou déposez un fichier · JPG, PNG, WEBP</div>
+      </div>
+
+      <div class="img-upload-progress" id="imgUploadProgress">
+        <div class="upload-spinner"></div>
+        <div class="upload-progress-text" id="imgUploadProgressText">Envoi vers Cloudinary…</div>
+      </div>
+
+      <div class="img-preview-wrap" id="imgPreviewWrap">
+        <img class="img-preview-thumb" id="imgPreviewThumb" src="" alt="Aperçu">
+        <div class="img-preview-info">
+          <div class="img-preview-name" id="imgPreviewName">Image uploadée ✅</div>
+          <div class="img-preview-url"  id="imgPreviewUrl"></div>
+        </div>
+        <button class="btn-remove-img" onclick="removeImage()">✕</button>
+      </div>
+
+      <div class="img-url-divider">ou coller une URL directement</div>
+
+      <input class="form-input" type="url" id="fImageUrl"
+             placeholder="https://res.cloudinary.com/…"
+             oninput="syncUrlToPreview(this.value)">
+      <div class="form-note">L'upload Cloudinary remplace automatiquement l'URL ci-dessus.</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Statut</label>
+      <select class="form-select" id="fStatut">
+        <option value="normal">Normal</option>
+        <option value="new">Nouveau</option>
+        <option value="promo">Promo</option>
+      </select>
+    </div>
+
+    <input type="hidden" id="fEditId">
+
+    <button class="btn-primary" onclick="sauvegarderProduit()" id="btnSauvegarder">
+      ✅ Sauvegarder le produit
+    </button>
+    <button class="btn-secondary" onclick="resetForm()">🔄 Réinitialiser</button>
+
+    <!-- Statut du push GitHub -->
+    <div class="push-status" id="pushStatus">
+      <div class="push-spinner" id="pushSpinner"></div>
+      <span id="pushStatusText"></span>
+    </div>
+  </div>
+
+  <!-- ── ONGLET : LISTE PRODUITS ── -->
+  <div class="tab-content" id="tabListe">
+    <div class="admin-list" id="adminList"></div>
+  </div>
+
+  <!-- ── ONGLET : CONFIG ── -->
+  <div class="tab-content" id="tabConfig">
+
+    <div class="settings-section">
+      <div class="settings-title">🔑 GitHub Personal Access Token</div>
+      <input class="form-input" type="password" id="cfgGhToken"
+             placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="margin-bottom:8px">
+      <div class="form-note">
+        Générez un PAT sur <strong>github.com → Settings → Developer settings → Personal access tokens</strong>.
+        Cochez la permission <code>repo</code> (ou <code>contents:write</code>).
+        Ce token est stocké localement dans votre navigateur, jamais envoyé ailleurs que GitHub.
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title">📁 Dépôt GitHub</div>
+      <div class="settings-row">
+        <input class="form-input" type="text" id="cfgGhOwner" placeholder="votre-pseudo">
+        <span style="padding:12px 4px;font-size:18px;color:var(--gray)">/</span>
+        <input class="form-input" type="text" id="cfgGhRepo" placeholder="fasomarket">
+      </div>
+      <div class="form-note">Votre nom d'utilisateur GitHub et le nom du dépôt.</div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title">🌿 Branche</div>
+      <input class="form-input" type="text" id="cfgGhBranch" placeholder="main" style="margin-bottom:8px">
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title">☁️ Cloudinary</div>
+      <input class="form-input" type="text" id="cfgCloudName" placeholder="Cloud Name" style="margin-bottom:8px">
+      <input class="form-input" type="text" id="cfgUploadPreset" placeholder="Upload Preset non-signé" style="margin-bottom:8px">
+      <div class="form-note">
+        Créez un <strong>Upload Preset non signé</strong> dans Cloudinary Settings → Upload.
+        Copiez votre <strong>Cloud Name</strong> depuis le tableau de bord.
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title">📞 Numéro WhatsApp</div>
+      <input class="form-input" type="tel" id="cfgWaNumber" placeholder="22674059599" style="margin-bottom:4px">
+      <div class="form-note">Sans + ni espace. Ex: 22674059599</div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title">📱 Numéro Orange Money marchand</div>
+      <input class="form-input" type="tel" id="cfgOmMerchant" placeholder="74059599" style="margin-bottom:4px">
+      <div class="form-note">Numéro utilisé dans le code USSD (*144*2*1*NUMERO*MONTANT#).</div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-title">🔐 Changer le PIN admin</div>
+      <div class="settings-row">
+        <input class="form-input" type="password" id="cfgNewPin" placeholder="Nouveau PIN (4 chiffres)" maxlength="4">
+        <button class="btn-save-settings" onclick="changePin()">Sauver</button>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="saveConfig()">💾 Sauvegarder la configuration</button>
+
+    <hr>
+
+    <div class="settings-section">
+      <div class="settings-title" style="color:var(--red)">🗑️ Zone de danger</div>
+      <button class="btn-primary" onclick="exportData()" style="background:var(--accent)">
+        📤 Exporter produits.json
+      </button>
+      <button class="btn-primary btn-danger" onclick="clearAllData()">
+        🗑️ Vider tous les produits
+      </button>
+    </div>
+  </div>
+
+</div><!-- /admin-panel -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="js/admin.js"></script>
+</body>
+</html>

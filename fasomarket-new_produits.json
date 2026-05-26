@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "nom": "Stéthoscope cardiologique",
+    "prix": 18000,
+    "categorie": "Matériel médical",
+    "description": "Stéthoscope double pavillon de haute qualité, idéal pour étudiants en médecine. Tube flexible anti-bruit.",
+    "emoji": "🩺",
+    "imageUrl": "",
+    "statut": "new"
+  },
+  {
+    "id": 2,
+    "nom": "Blouse blanche médicale",
+    "prix": 8500,
+    "categorie": "Tenues scolaires",
+    "description": "Blouse blanche professionnelle 100% coton. Disponible en S, M, L, XL. Manches longues, 2 poches.",
+    "emoji": "🥼",
+    "imageUrl": "",
+    "statut": "normal"
+  },
+  {
+    "id": 3,
+    "nom": "Tensiomètre à brassard",
+    "prix": 22000,
+    "categorie": "Diagnostic",
+    "description": "Tensiomètre numérique automatique. Précision ±2mmHg. Mémoire 60 mesures. Adapté au poignet gauche.",
+    "emoji": "🔴",
+    "imageUrl": "",
+    "statut": "normal"
+  },
+  {
+    "id": 4,
+    "nom": "Gants d'examen latex (boîte)",
+    "prix": 4500,
+    "categorie": "Consommables",
+    "description": "Boîte de 100 gants latex non-stériles, taille M. Sans poudre. Norme CE.",
+    "emoji": "🧤",
+    "imageUrl": "",
+    "statut": "promo"
+  },
+  {
+    "id": 5,
+    "nom": "Tenue de bloc chirurgical",
+    "prix": 12000,
+    "categorie": "Tenues scolaires",
+    "description": "Set complet (haut + bas) tissu polycotton lavable. Coloris: vert ou bleu. Tailles S à XL.",
+    "emoji": "🩻",
+    "imageUrl": "",
+    "statut": "normal"
+  },
+  {
+    "id": 6,
+    "nom": "Otoscope à LED",
+    "prix": 15500,
+    "categorie": "Diagnostic",
+    "description": "Otoscope LED avec 4 spéculums auriculaires. Éclairage puissant, batterie AA.",
+    "emoji": "🔦",
+    "imageUrl": "",
+    "statut": "new"
+  },
+  {
+    "id": 7,
+    "nom": "Marteau réflexes",
+    "prix": 3200,
+    "categorie": "Matériel médical",
+    "description": "Marteau à réflexes en caoutchouc de qualité supérieure. Manche métal chromé.",
+    "emoji": "🔨",
+    "imageUrl": "",
+    "statut": "normal"
+  },
+  {
+    "id": 8,
+    "nom": "Masque chirurgical (boîte 50)",
+    "prix": 2800,
+    "categorie": "Consommables",
+    "description": "Boîte de 50 masques chirurgicaux 3 couches. Filtration ≥ 95%.",
+    "emoji": "😷",
+    "imageUrl": "",
+    "statut": "normal"
+  },
+  {
+    "id": 9,
+    "nom": "Lampe stylo clinique",
+    "prix": 2500,
+    "categorie": "Matériel médical",
+    "description": "Lampe stylo LED pour examen clinique. Lumière blanche froide. Pile incluse.",
+    "emoji": "🔆",
+    "imageUrl": "",
+    "statut": "normal"
+  },
+  {
+    "id": 10,
+    "nom": "Sabots médicaux anatomiques",
+    "prix": 9500,
+    "categorie": "Tenues scolaires",
+    "description": "Sabots médicaux confortables, semelle antidérapante. Blanc ou bleu. Pointures 36 à 44.",
+    "emoji": "👟",
+    "imageUrl": "",
+    "statut": "normal"
+  }
+]

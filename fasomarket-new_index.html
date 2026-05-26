@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f2d6e">
+  <meta name="description" content="FasoMarket — Matériel médical et tenues scolaires pour étudiants en sciences de santé, Ouagadougou.">
+  <title>FasoMarket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="logo">
+    Faso<span>Market</span>
+    <small>Ouagadougou, BF</small>
+  </div>
+  <div class="header-actions">
+    <a class="btn-icon" href="admin.html" title="Administration" aria-label="Administration">⚙️</a>
+  </div>
+</header>
+
+<!-- ── HERO + RECHERCHE ── -->
+<div class="hero">
+  <div class="hero-badge">🏥 Sciences de santé</div>
+  <h1>Matériel médical &amp; tenues scolaires</h1>
+  <p>Livraison rapide à Ouagadougou. Paiement à la livraison ou Orange Money.</p>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" type="search" id="searchInput"
+           placeholder="Stéthoscope, blouse, tensiomètre…"
+           autocomplete="off" oninput="filterProducts(this.value)">
+    <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+  </div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<!-- ── CATÉGORIES ── -->
+<div class="categories-section">
+  <div class="section-title">Catégories</div>
+  <div class="cat-scroll" id="catScroll">
+    <button class="cat-chip active" data-cat="all" onclick="filterByCategory('all', this)">
+      <span class="cat-emoji">🛍️</span> Tous
+    </button>
+  </div>
+</div>
+
+<!-- ── PRODUITS ── -->
+<div class="products-section">
+  <div class="products-header">
+    <div class="section-title" style="margin-bottom:0">Catalogue</div>
+    <span class="products-count" id="productsCount"></span>
+  </div>
+  <div class="product-grid" id="productGrid">
+    <!-- Squelettes de chargement -->
+    <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div><div class="skeleton skeleton-line price"></div></div>
+    <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div><div class="skeleton skeleton-line price"></div></div>
+    <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div><div class="skeleton skeleton-line price"></div></div>
+    <div class="skeleton-card"><div class="skeleton skeleton-img"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div><div class="skeleton skeleton-line price"></div></div>
+  </div>
+</div>
+
+<!-- ── POURQUOI NOUS ── -->
+<div class="marketing-section">
+  <div class="section-title">Pourquoi nous choisir</div>
+  <div class="why-grid">
+    <div class="why-card">
+      <span class="why-icon">🚀</span>
+      <div class="why-title">Livraison rapide</div>
+      <div class="why-desc">Ouagadougou et environs le jour même</div>
+    </div>
+    <div class="why-card">
+      <span class="why-icon">🤝</span>
+      <div class="why-title">Paiement flexible</div>
+      <div class="why-desc">Cash ou Mobile Money à la livraison</div>
+    </div>
+    <div class="why-card">
+      <span class="why-icon">✅</span>
+      <div class="why-title">Produits vérifiés</div>
+      <div class="why-desc">Contrôle qualité avant chaque expédition</div>
+    </div>
+    <div class="why-card">
+      <span class="why-icon">💬</span>
+      <div class="why-title">Support 7j/7</div>
+      <div class="why-desc">WhatsApp disponible en permanence</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TÉMOIGNAGES ── -->
+<div class="marketing-section">
+  <div class="section-title">Ce que disent nos clients</div>
+  <div class="testimonials-list">
+    <div class="testi-card">
+      <p class="testi-text">« Produit reçu en bon état, conforme à la photo. Stéthoscope de très bonne qualité ! »</p>
+      <p class="testi-author">— Awa, étudiante en médecine, Ouaga</p>
+    </div>
+    <div class="testi-card">
+      <p class="testi-text">« Livraison rapide, le lendemain déjà. La blouse correspond parfaitement. »</p>
+      <p class="testi-author">— Issouf, infirmier, Bobo</p>
+    </div>
+    <div class="testi-card">
+      <p class="testi-text">« J'ai payé à la livraison sans stress. Je recommande FasoMarket à tous mes camarades. »</p>
+      <p class="testi-author">— Mariam, sage-femme, Ouaga</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── CONTACT ── -->
+<div class="marketing-section">
+  <div class="section-title">Contact</div>
+  <div class="contact-card">
+    <div class="contact-row">
+      <span class="ico">📞</span>
+      <span><strong>WhatsApp : </strong><a href="https://wa.me/22674059599" target="_blank" id="waContactLink">+226 74 05 95 99</a></span>
+    </div>
+    <div class="contact-row">
+      <span class="ico">📍</span>
+      <span>Ouagadougou, secteur 15</span>
+    </div>
+    <div class="contact-row">
+      <span class="ico">🕒</span>
+      <span>Lun – Sam : 8h – 19h</span>
+    </div>
+    <button class="btn-wa-main" onclick="openWhatsApp('Bonjour FasoMarket, je souhaite passer une commande.')">
+      💬 Commander sur WhatsApp
+    </button>
+  </div>
+</div>
+
+<footer>© 2026 FasoMarket — Simple, rapide, local.</footer>
+
+<!-- ── LANGUETTE ORANGE MONEY ── -->
+<button class="om-tab" onclick="ouvrirPaiementOM(null)" aria-label="Paiement Orange Money">
+  <span class="om-icon">📱</span>
+  Payer OM
+</button>
+
+<!-- ═══════════════════════════ MODAL PRODUIT ═══════════════════════════ -->
+<div class="modal-overlay" id="modalProduit" onclick="closeModalProduct(event)">
+  <div class="modal-sheet" id="modalProduitSheet">
+    <div class="sheet-handle"></div>
+    <div id="modalProduitContent"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MODAL ORANGE MONEY ═══════════════════════ -->
+<div class="modal-overlay" id="modalOM" onclick="closeModalOM(event)">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="om-modal-header">
+      <div class="om-heart">🧡</div>
+      <div class="om-modal-title">Paiement Orange Money</div>
+      <div class="om-modal-sub">Entrez le montant à payer</div>
+    </div>
+    <div class="om-input-wrap" id="omInputWrap">
+      <input class="input-field" type="number" id="omManualAmount"
+             placeholder="Ex: 5000"
+             oninput="updateOmAmount(this.value)">
+    </div>
+    <div class="om-amount-big" id="omAmountDisplay">0 FCFA</div>
+    <div class="modal-actions" style="gap:12px">
+      <button class="btn-om-orange" onclick="lancerUSSD()">
+        📱 Payer maintenant (code USSD)
+      </button>
+      <button class="btn-om-green" onclick="envoiWhatsAppOM()">
+        💬 Confirmer le paiement
+      </button>
+      <div class="om-note-box">
+        <p>📌 <strong>Après le paiement :</strong><br>
+        Cliquez sur « <em>Confirmer le paiement</em> » pour nous envoyer votre reçu via WhatsApp.</p>
+      </div>
+      <button class="btn-om-close" onclick="closeModal('modalOM')">✕ Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
