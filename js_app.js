@@ -4,6 +4,7 @@
    ═══════════════════════════════════════════════════════════ */
 
 'use strict';
+const URL_API = "https://script.google.com/macros/s/AKfycbzocpRAaL58zWTRl-k_tNXdpI4vSzGCEWnip3LeEDTtxHNJ35-m-grPqMvzp1ElQFd9OQ/exec?spreadsheetId=16jxzNRw4gv7NOJiVpxW1fIAeA_uEn6DpilngMttuuVY&sheetName=Feuille 1";
 
 // ──────────────────────────────────────────
 // CONFIG — personnalisable sans toucher au reste
@@ -33,23 +34,23 @@ let state = {
 // ──────────────────────────────────────────
 // CHARGEMENT PRODUITS (fetch produits.json)
 // ──────────────────────────────────────────
-async function loadProducts() {
+async function chargerProduits() {
   try {
-    // Ajout d'un timestamp pour éviter le cache navigateur en dev
-    const resp = await fetch('./produits.json?t=' + Date.now(), { cache: 'no-store' });
+    const resp = await fetch(URL_API);
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const data = await resp.json();
-    state.allProducts = Array.isArray(data) ? data : [];
-    renderAll();
+    const donnees = await resp.json();
+    État.tous_les_produits = Array.isArray(donnees) ? donnees : [];
+    tout_rendre();
   } catch (e) {
-    console.error('Erreur chargement produits.json :', e);
-    document.getElementById('productGrid').innerHTML =
-      `<div class="no-results">
+    console.error("Erreur de chargement Google Sheets :", e);
+    document.getElementById('productGrid').innerHTML = `
+      <div class="no-results">
         <div class="ico">⚠️</div>
         <p>Impossible de charger le catalogue.<br>Vérifiez votre connexion.</p>
-       </div>`;
+      </div>`;
   }
 }
+
 
 // ──────────────────────────────────────────
 // RENDU
